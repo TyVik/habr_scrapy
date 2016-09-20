@@ -1,19 +1,24 @@
-from scrapy.spiders import CrawlSpider
+from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
+from scrapy.spiders import CrawlSpider
+from scrapy.spiders import Rule
 
 from habr.items import HabrItem
 
 
 class HabrSpider(CrawlSpider):
-    name = "habr"  # имя для crawl команды
-    allowed_domains = ["habrahabr.ru"]  # на страницы с каких сайтов переходить
+    name = "habr"
+    allowed_domains = ["habrahabr.ru"]
     start_urls = [
-        "http://habrahabr.ru"  # откуда начинать
+        "https://habrahabr.ru"
     ]
 
-    def parse(self, response):
+    rules = (
+        Rule(LinkExtractor(allow=('/page\d+/',)), callback='parse_item'),
+    )
+
+    def parse_item(self, response):
         root = Selector(response)
-        # да, классы необходимо указывать полностью
         posts = root.xpath('//div[@class="post post_teaser shortcuts_item"]')
         for post in posts:
             item = HabrItem()
