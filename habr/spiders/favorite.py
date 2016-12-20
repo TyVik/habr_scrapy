@@ -18,9 +18,6 @@ class FavoriteSpider(CrawlSpider):
     def start_requests(self):
         yield Request(self.login_page, callback=self.login)
 
-    def init_request(self):
-        return Request(url=self.login_page, callback=self.login)
-
     def login(self, response):
         return FormRequest.from_response(response,
                                          formdata={'email': 'tyvik8@gmail.com', 'password': 'password'},
